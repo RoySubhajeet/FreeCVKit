@@ -2,7 +2,13 @@
 __pycache__/
 *.py[codz]
 *$py.class
+#media
+*.mp4
+*.jpg
+*.jpeg
+*.png
 
+*.pt
 # C extensions
 *.so
 
@@ -19,6 +25,7 @@ lib64/
 parts/
 sdist/
 var/
+generated
 wheels/
 share/python-wheels/
 *.egg-info/
@@ -138,6 +145,7 @@ celerybeat.pid
 .env
 .envrc
 .venv
+.idea
 env/
 venv/
 ENV/
