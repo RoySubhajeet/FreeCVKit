@@ -53,9 +53,9 @@ Follow these steps to get **FreeCVKit** up and running on your local machine.
 
 2. **Select your options:**
 
-   - **1) Select CV Task:** Choose between "Pose Estimation and Landmark tracking" or "Object Detection Object tracking."
+   - **1) Select CV Task:** Choose between main_options[0] or main_options[1]
    - **2) Select Model Type:** This dropdown will dynamically update based on your CV Task selection (e.g., "MediaPipe Pose landmarker" for Pose Estimation, or "EfficientDet-Lite", "YOLO" for Object Detection).
-   - **Select Labels to Filter:** (Appears only for "Object Detection Object tracking") Choose up to four labels like "person", "car", "traffic signal", "dog". "person" is pre-selected by default.
+   - **Select Labels to Filter:** (Appears only for main_options[1]) Choose up to four labels like "person", "car", "traffic signal", "dog". "person" is pre-selected by default.
    - **Select Detection Sensitivity:** Adjust the sensitivity of the detection model.
    - **3) Select Input Source:** Choose to analyze an image or video from your gallery, or select "Live video" (currently not supported).
      - If "Select image from gallery to analyze" or "Select video from gallery" is chosen, a file browser will open for you to pick your input file. The selected file path will be displayed.
