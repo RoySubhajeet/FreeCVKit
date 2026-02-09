@@ -261,7 +261,7 @@ class ObjectDetector:
 
     def track_video_deep_sort_algo(self, input_video_path: str, output_video_path: str):
         """
-        Track objects using DeepSORT in a video.
+        Track objects using DeepSORT in a video with up/down and left/right counting.
         """
         cap = cv2.VideoCapture(input_video_path)
         if not cap.isOpened():
@@ -276,8 +276,12 @@ class ObjectDetector:
         # Initialize DeepSORT
         tracker = DeepSort(max_age=30, n_init=3, nms_max_overlap=1.0, max_cosine_distance=0.3)
 
-        line_y = height // 2
+        # Horizontal and vertical reference lines
+        line_y = height // 2  # horizontal line in the middle
+        line_x = width // 2   # vertical line in the middle
+
         count_up, count_down = 0, 0
+        count_left, count_right = 0, 0
         track_memory = {}
 
         while True:
@@ -318,6 +322,7 @@ class ObjectDetector:
             for track in tracks:
                 if not track.is_confirmed():
                     continue
+
                 track_id = track.track_id
                 l, t, w, h = track.to_ltwh()
                 cx, cy = int(l + w / 2), int(t + h / 2)
@@ -327,7 +332,7 @@ class ObjectDetector:
                 cv2.putText(annotated, f"ID {track_id}", (int(l), int(t) - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-                # Draw trajectory
+                # Track path
                 if track_id not in track_memory:
                     track_memory[track_id] = []
                 track_memory[track_id].append((cx, cy))
@@ -335,7 +340,7 @@ class ObjectDetector:
                     cv2.line(annotated, track_memory[track_id][i - 1],
                              track_memory[track_id][i], (255, 0, 0), 2)
 
-                # Up/Down Counter
+                # Count Up/Down movements
                 if len(track_memory[track_id]) >= 2:
                     prev_y = track_memory[track_id][-2][1]
                     curr_y = track_memory[track_id][-1][1]
@@ -344,11 +349,27 @@ class ObjectDetector:
                     elif prev_y > line_y >= curr_y:
                         count_up += 1
 
-            # Draw center line and counts
-            cv2.line(annotated, (0, line_y), (width, line_y), (0, 0, 255), 2)
+                # Count Left/Right movements
+                if len(track_memory[track_id]) >= 2:
+                    prev_x = track_memory[track_id][-2][0]
+                    curr_x = track_memory[track_id][-1][0]
+                    if prev_x < line_x <= curr_x:
+                        count_right += 1
+                    elif prev_x > line_x >= curr_x:
+                        count_left += 1
+
+            # Draw horizontal and vertical lines
+            cv2.line(annotated, (0, line_y), (width, line_y), (0, 0, 255), 2)  # horizontal
+            cv2.line(annotated, (line_x, 0), (line_x, height), (255, 0, 0), 2)  # vertical
+
+            # Display counts
             cv2.putText(annotated, f"Up: {count_up}", (10, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             cv2.putText(annotated, f"Down: {count_down}", (10, 70),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(annotated, f"Left: {count_left}", (10, 110),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(annotated, f"Right: {count_right}", (10, 150),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
             out.write(annotated)
@@ -356,7 +377,6 @@ class ObjectDetector:
         cap.release()
         out.release()
         print(f"✅ Processed video saved at: {output_video_path}")
-
 
 
 

@@ -1,5 +1,5 @@
 # Copyright 2025 Subhajeet Roy & Winix Technologies Pvt Ltd
-
+import os
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -166,6 +166,11 @@ class ConfigApp:
         self.config["file_path"] = None
         self.widgets["file_path_label"].config(text="File Path: None")
 
+        default_dir = self.config.get(
+            "default_source_dir",
+            os.path.expanduser("~/Videos")  # fallback
+        )
+
         if selected_source == "Select image from gallery to analyze":
             filetypes = [("Image Files", "*.png *.jpg *.jpeg *.gif *.bmp")]
         elif selected_source == "Select video from gallery":
@@ -175,10 +180,17 @@ class ConfigApp:
                 messagebox.showinfo("Feature Not Supported", "Live video is not supported for now.")
             return
 
-        file_path = filedialog.askopenfilename(title="Select File", filetypes=filetypes)
+        file_path = filedialog.askopenfilename(
+            title="Select File",
+            filetypes=filetypes,
+            initialdir=default_dir
+        )
+
         if file_path:
             self.config["file_path"] = file_path
             self.widgets["file_path_label"].config(text=f"File Path: {file_path}")
+            # remember last directory
+            self.config["default_source_dir"] = os.path.dirname(file_path)
         else:
             self.widgets["input_source"].set("Select an option")
 

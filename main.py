@@ -16,7 +16,10 @@ from app_modules.global_config_gui import ConfigApp
 from app_modules.object_detector_tracker import ObjectDetector
 from app_modules.pose_landmarker_estimation import process_video_with_pose_estimation, \
     process_image_with_pose_estimation
+from app_modules.tennis_analyzer import start_tennis_analysis
 from app_modules.utils import get_file_name_from_path
+from qmaze_learning import run_Qdemo
+
 app = ConfigApp()
 
 # Run the GUI
@@ -121,3 +124,5 @@ def perform_action_based_on_config():
 
 
 perform_action_based_on_config()
+#start_tennis_analysis()
+#run_Qdemo()
